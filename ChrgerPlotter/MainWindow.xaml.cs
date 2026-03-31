@@ -44,13 +44,13 @@ namespace ChrgerPlotter
         private string? _selectedPort;
         double prev_time = 0.0;
 
-        System.IO.Ports.SerialPort serialPort;
+        System.IO.Ports.SerialPort? serialPort = null;
 
-        private DispatcherTimer timer;
-        Task readTask;
+        private DispatcherTimer? timer = null;
+        Task? readTask = null;
 
-        ScottPlot.Plottables.DataLogger Logger_Voltage;
-        ScottPlot.Plottables.DataLogger Logger_Amperage;
+        ScottPlot.Plottables.DataLogger? Logger_Voltage = null;
+        ScottPlot.Plottables.DataLogger? Logger_Amperage = null;
 
         public MainWindow()
         {
@@ -60,8 +60,10 @@ namespace ChrgerPlotter
         bool OpenSerial()
         {
             bool ret = true;
-            serialPort = new System.IO.Ports.SerialPort(_selectedPort, 57600);
-            serialPort.NewLine = "\n";
+            serialPort = new System.IO.Ports.SerialPort(_selectedPort, 57600)
+            {
+                NewLine = "\n"
+            };
             try
             {
                 serialPort.Open();
@@ -122,8 +124,10 @@ namespace ChrgerPlotter
 
         private void StartTimer()
         {
-            timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(0.2); // 200ms interval
+            timer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(0.2) // 200ms interval
+            };
             timer.Tick += new EventHandler(Timer_Tick);
             timer.Start();
         }
@@ -168,16 +172,19 @@ namespace ChrgerPlotter
                 return;
             }
 
-            // If the charger is reseted
-            if (prev_time > parsedFrame.Time)
+            if ((Logger_Voltage != null) && (Logger_Amperage !=null))
             {
-                Logger_Voltage.Clear();
-                Logger_Amperage.Clear();
-            }
-            prev_time = parsedFrame.Time;
+                // If the charger is reseted
+                if (prev_time > parsedFrame.Time)
+                {
+                    Logger_Voltage.Clear();
+                    Logger_Amperage.Clear();
+                }
+                prev_time = parsedFrame.Time;
 
-            Logger_Voltage.Add(new Coordinates(x: parsedFrame.Time, y: parsedFrame.Voltage_mv * 0.001));
-            Logger_Amperage.Add(new Coordinates(x: parsedFrame.Time, y: parsedFrame.Current_mA * 0.001));
+                Logger_Voltage.Add(new Coordinates(x: parsedFrame.Time, y: parsedFrame.Voltage_mv * 0.001));
+                Logger_Amperage.Add(new Coordinates(x: parsedFrame.Time, y: parsedFrame.Current_mA * 0.001));
+            }
 
             TB_Voltage.Text = (parsedFrame.Voltage_mv * 0.001).ToString("0.000") + " V";
             TB_C1.Text = (parsedFrame.Cell1 * 0.001).ToString("0.000") + " V";
@@ -282,13 +289,14 @@ namespace ChrgerPlotter
         private async void BTN_Stop_Click(object sender, RoutedEventArgs e)
         {
             // Stop the timer
-            timer.Stop();
+            timer?.Stop();
+           
 
             if (readTask != null && !readTask.IsCompleted)
             {
                 try
                 {
-                    serialPort.Close();
+                    serialPort?.Close();
                 }
                 catch
                 {
@@ -306,7 +314,7 @@ namespace ChrgerPlotter
             }
             else
             {
-                try { serialPort.Close(); } catch { }
+                try { serialPort?.Close(); } catch { }
             }
 
             CB_Port.IsEnabled = true;
