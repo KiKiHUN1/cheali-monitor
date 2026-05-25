@@ -6,6 +6,9 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <AssemblyName>Cheali Monitor</AssemblyName>
+    <AssemblyTitle>Cheali Monitor</AssemblyTitle>
+    <Authors>KiKiHUN</Authors>
   </PropertyGroup>
 
   <ItemGroup>

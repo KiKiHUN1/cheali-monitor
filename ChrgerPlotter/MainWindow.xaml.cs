@@ -79,8 +79,8 @@ namespace ChrgerPlotter
         private void GeneratePlot()
         {
             Plot plt = wpfPlot.Plot; //get plot reference
-            plt.DataBackground.Color = Color.FromHex("#8db5a8");
-            plt.FigureBackground.Color = Color.FromHex("#8db5a8");
+            plt.DataBackground.Color = Color.FromHex("#6b8a80");
+            plt.FigureBackground.Color = Color.FromHex("#6b8a80");
             plt.Clear();
             IYAxis left = wpfPlot.Plot.Axes.Left; //left Y-axis
             RightAxis right = wpfPlot.Plot.Axes.AddRightAxis(); //right Y-axis
@@ -89,29 +89,34 @@ namespace ChrgerPlotter
 
             // Add voltage on left Y-axis
             left.Label.Text = "Voltage (V)";
+            left.Label.ForeColor = ScottPlot.Color.FromHex("#1f4fbf");
             Logger_Voltage = plt.Add.DataLogger();
             Logger_Voltage.Axes.YAxis = left;
+            Logger_Voltage.LineWidth = 2;
             left.Min = 0; 
             left.Max = 30; 
             HorizontalLine hLineVolt = wpfPlot.Plot.Add.HorizontalLine(0, 1.1f, ScottPlot.Color.FromHex("#1f4fbf")); // Add a horizontal line at 0V for reference
             hLineVolt.Axes.YAxis = left;
-            hLineVolt.Color = ScottPlot.Color.FromHex("#1f4fbf");
+
 
             // Add current on right Y-axis
             right.LabelText = "Current (A)";
+            right.Color( ScottPlot.Color.FromHex("#e87d25"));
             Logger_Amperage = plt.Add.DataLogger();
             Logger_Amperage .Axes.YAxis = right;
+            Logger_Amperage.LineWidth = 2;
 
             // Set scale for current axis
             right.Min = 0;    // minimum current
             right.Max = 5;    // maximum current
-            HorizontalLine hLineAmp = wpfPlot.Plot.Add.HorizontalLine(0, 1.1f); // Add a horizontal line at 0A for reference
+            HorizontalLine hLineAmp = wpfPlot.Plot.Add.HorizontalLine(0, 1.1f, ScottPlot.Color.FromHex("#e87d25")); // Add a horizontal line at 0A for reference
             hLineAmp.Axes.YAxis = right;
-            hLineAmp.Color = ScottPlot.Color.FromHex("#e87517");
-            
+
+
             // Title and X-axis
             bottom.Label.Text = "Time (s)";
             bottom.Min = 0;
+            bottom.Label.OffsetY = -10;
 
             wpfPlot.Refresh(); // Refresh the plot to display changes
         }
